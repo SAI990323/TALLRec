@@ -1,0 +1,8 @@
+accelerate
+appdirs
+bitsandbytes
+black
+black[jupyter]
+datasets
+fire
+gradio
