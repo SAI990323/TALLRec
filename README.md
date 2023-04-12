@@ -21,4 +21,4 @@ Table 1. we shown the AUC results of the baseline models and our frameworks on m
 | movie | 65.83 | 64.2  |
 | book  | 59.99 | 60.35 |
 
-Table 2. we show the strong generalization ability of our frameworks, the column represents the training domain while the row represents the test domain.image.png
+Table 2. we show the strong generalization ability of our frameworks, the column represents the training domain while the row represents the test domain.
