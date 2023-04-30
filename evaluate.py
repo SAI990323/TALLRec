@@ -3,8 +3,12 @@ import sys
 import fire
 import gradio as gr
 import torch
+torch.set_num_threads(1)
 import transformers
 import json
+import os
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
+os.environ['OMP_NUM_THREADS'] = '1'
 from peft import PeftModel
 from transformers import GenerationConfig, LlamaForCausalLM, LlamaTokenizer
 from sklearn.metrics import roc_auc_score
@@ -25,6 +29,7 @@ def main(
     base_model: str = "",
     lora_weights: str = "tloen/alpaca-lora-7b",
     test_data_path: str = "data/test.json",
+    result_json_data: str = "temp.json",
     share_gradio: bool = False,
 ):
     assert (
@@ -48,7 +53,7 @@ def main(
     seed = temp_list[-2]
     sample = temp_list[-1]
     
-    f = open('result.json', 'r')
+    f = open(result_json_data, 'r')
     data = json.load(f)
     f.close()
 
@@ -162,8 +167,11 @@ def main(
                 gold_list.append(0)
             output, logits = evaluate(test['instruction'], test['input'])
             logit_list.append(logits[0].item())
+    
+    # print(roc_auc_score(gold_list, logit_list))
+
     data[train_sce][test_sce][model_name][seed][sample] = roc_auc_score(gold_list, logit_list)
-    f = open('result.json', 'w')
+    f = open(result_json_data, 'w')
     json.dump(data, f, indent=4)
     f.close()
 

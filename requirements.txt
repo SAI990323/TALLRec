@@ -6,3 +6,4 @@ black[jupyter]
 datasets
 fire
 gradio
+seaborn
