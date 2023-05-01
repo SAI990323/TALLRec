@@ -31,7 +31,7 @@ bash ./shell/evaluate.sh  gpu_id  output_dir
 ```
 If you want to run it under your environment, you need to make changes to the sh file:
 - base_model: LLaMA parameter weight path in Hugginface format
-- test_data=XXX Test data set path such as "./data/movie/test.json" for movie dataset.
+- test_data: Test data set path such as "./data/movie/test.json" for movie dataset.
 
 Note that we will automatically detect all the different seed and sample files in the output_dir directory, and then integrate these results into the output_dir.json file
 
