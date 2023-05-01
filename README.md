@@ -23,7 +23,7 @@ If you want to run it under your environment, you need to make changes to the sh
 - base_model: LLaMA parameter weight path in Hugginface format
 - train_data:  Training data path such as "./data/movie/train.json" for movie dataset.
 - val_data: Validation data set path such as "./data/movie/valid.json" for movie dataset.
-- instruction_model: The LoRA weights after the instruction tuning.
+- instruction_model: The LoRA weights after the instruction tuning, for example lora weight from alpaca-lora.
 
 After training, you need to evluate the test result on the best model evaluated by the validation set.
 ```
