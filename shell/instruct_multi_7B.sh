@@ -21,7 +21,7 @@ do
                     --train_data_path2 $train_data2 \
                     --val_data_path $val_data \
                     --val_data_path2 $val_data_path2 \
-                    --output_dir $output_dir \
+                    --output_dir $output_dir_$seed_$sample\
                     --batch_size 128 \
                     --micro_batch_size 64 \
                     --num_epochs 200 \

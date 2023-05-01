@@ -1,5 +1,4 @@
 We introduce a novel framework (TALLRec) that enables the efficient and effective adaptation of LLMs to recommendation tasks.
-Our project is based on Alpaca_lora (https://github.com/tloen/alpaca-lora) and the python environment is the same as Alpaca_lora.
 
 ## Main results
 |                                 |  |movie |  ||   book |  |
@@ -15,31 +14,24 @@ Our project is based on Alpaca_lora (https://github.com/tloen/alpaca-lora) and t
 
 Table 1. we shown the AUC results of the baseline models and our frameworks on movie and book scenarios.
 
-Train TALLRec base on LLAMA7B:
+Train TALLRec base on LLaMA7B:
 ```
-bash ./shell/instruct_7B.sh  gpu_id  random_seed
+bash ./shell/instruct_7B.sh  gpu_id random_seed
 ```
-The gpu_id stands for the id of GPU you want to run the code on.
-
 If you want to run it under your environment, you need to make changes to the sh file:
-
-output_dir=XXX  Save result path
-
-base_model=XXX  LLAMA model weight position, hugginface format
-
-train_data=XXX  Training data set path such as "./data/movie/train.json" for movie dataset.
-
-val_data=XXX  Validation data set path such as "./data/movie/valid.json" for movie dataset.
-
-instruction_model=XXX The lora weight after alpaca-lora instruction tuning.
+- output_dir: Model save path，we will automatically add the seed and the sample to the end of the path for each experiments.
+- base_model: LLaMA parameter weight path in Hugginface format
+- train_data:  Training data path such as "./data/movie/train.json" for movie dataset.
+- val_data: Validation data set path such as "./data/movie/valid.json" for movie dataset.
+- instruction_model: The LoRA weights after the instruction tuning.
 
 After training, you need to evluate the test result on the best model evaluated by the validation set.
-
 ```
-bash ./shell/evaluate.sh  gpu_id  model_type
+bash ./shell/evaluate.sh  gpu_id  output_dir
 ```
 If you want to run it under your environment, you need to make changes to the sh file:
+- base_model: LLaMA parameter weight path in Hugginface format
+- test_data=XXX Test data set path such as "./data/movie/test.json" for movie dataset.
+Note that we will automatically detect all the different seed and sample files in the output_dir directory, and then integrate these results into the output_dir.json file
 
-base_model=XXX LLAMA model weight position, hugginface format
-
-test_data=XXX Test data set path such as "./data/movie/test.json" for movie dataset.
+Our project is developed based on the Alpaca_lora repo (https://github.com/tloen/alpaca-lora), thanks for their contributions.

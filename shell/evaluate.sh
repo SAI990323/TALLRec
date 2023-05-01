@@ -1,8 +1,7 @@
-# $2 means the type of the model (e.g instruct_movie)
 CUDA_ID=$1
 output_dir=$2
-cp temp.json $output_dir_book.json
-model_path=$(ls -d $output_dir)
+cp temp.json $output_dir.json
+model_path=$(ls -d $output_dir*)
 base_model=XXX
 test_data=XXX
 for path in $model_path
@@ -12,5 +11,5 @@ do
         --base_model $base_model \
         --lora_weights $path \
         --test_data_path $test_data \
-        --result_json_data $2_book.json
+        --result_json_data $2.json
 done
