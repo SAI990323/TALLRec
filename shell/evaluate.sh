@@ -1,7 +1,8 @@
 # $2 means the type of the model (e.g instruct_movie)
 CUDA_ID=$1
-cp temp.json $2_book.json
-model_path=$(ls -d /model_path/$2*)
+output_dir=$2
+cp temp.json $output_dir_book.json
+model_path=$(ls -d /$output_dir)
 base_model=XXX
 test_data=XXX
 for path in $model_path
