@@ -277,7 +277,7 @@ def generate_prompt(data_point):
 ### Response:
 {data_point["output"]}"""
     else:
-        return f"""Below is an instruction that describes a task. Write a response that appropriately completes the request.  # noqa: E501
+        return f"""Below is an instruction that describes a task. Write a response that appropriately completes the request. 
 
 ### Instruction:
 {data_point["instruction"]}
