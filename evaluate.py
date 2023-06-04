@@ -53,9 +53,12 @@ def main(
     seed = temp_list[-2]
     sample = temp_list[-1]
     
-    f = open(result_json_data, 'r')
-    data = json.load(f)
-    f.close()
+    if os.path.exists(result_json_data):
+        f = open(result_json_data, 'r')
+        data = json.load(f)
+        f.close()
+    else:
+        data = dict()
 
     if not data.__contains__(train_sce):
         data[train_sce] = {}

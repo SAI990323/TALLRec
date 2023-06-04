@@ -1,6 +1,5 @@
 CUDA_ID=$1
 output_dir=$2
-cp temp.json $output_dir.json
 model_path=$(ls -d $output_dir*)
 base_model=XXX
 test_data=XXX
