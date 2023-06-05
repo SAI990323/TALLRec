@@ -9,7 +9,7 @@ for lr in 1e-4
 do
     for dropout in 0.05
     do
-        for sample in 1 2 4 8 16 32 64 128 256 512
+        for sample in 64
         do
                 mkdir -p $output_dir
                 echo "lr: $lr, dropout: $dropout , seed: $seed, sample: $sample"
@@ -19,7 +19,7 @@ do
                     --val_data_path $val_data \
                     --output_dir $output_dir_$seed_$sample \
                     --batch_size 128 \
-                    --micro_batch_size 64 \
+                    --micro_batch_size 32 \
                     --num_epochs 200 \
                     --learning_rate $lr \
                     --cutoff_len 512 \
