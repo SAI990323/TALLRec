@@ -116,23 +116,20 @@ def main(
     if not load_8bit:
         model.half()  # seems to fix bugs for some users.
 
-    model.eval()
-    if torch.__version__ >= "2" and sys.platform != "win32":
-        model = torch.compile(model)
 
     def evaluate(
-        instruction,
-        input=None,
+        instructions,
+        inputs=None,
         temperature=0,
         top_p=1.0,
         top_k=40,
         num_beams=1,
         max_new_tokens=128,
+        batch_size=1,
         **kwargs,
     ):
-        prompt = generate_prompt(instruction, input)
-        inputs = tokenizer(prompt, return_tensors="pt")
-        input_ids = inputs["input_ids"].to(device)
+        prompt = [generate_prompt(instruction, input) for instruction, input in zip(instructions, inputs)]
+        inputs = tokenizer(prompt, return_tensors="pt", padding=True, truncation=True).to(device)
         generation_config = GenerationConfig(
             temperature=temperature,
             top_p=top_p,
@@ -140,38 +137,53 @@ def main(
             num_beams=num_beams,
             **kwargs,
         )
-        L = input_ids.shape[1]
-        # print(L)
         with torch.no_grad():
             generation_output = model.generate(
-                input_ids=input_ids,
+                **inputs,
                 generation_config=generation_config,
                 return_dict_in_generate=True,
                 output_scores=True,
                 max_new_tokens=max_new_tokens,
+                # batch_size=batch_size,
             )
+        s = generation_output.sequences
         scores = generation_output.scores[0].softmax(dim=-1)
-        logits = torch.tensor([scores[0][8241], scores[0][3782]], dtype=torch.float32).softmax(dim=-1)
-        s = generation_output.sequences[0]
-        output = tokenizer.decode(s[L:], skip_special_tokens=True)
-        return output.strip(' '), logits
+        logits = torch.tensor(scores[:,[8241, 3782]], dtype=torch.float32).softmax(dim=-1)
+        input_ids = inputs["input_ids"].to(device)
+        L = input_ids.shape[1]
+        s = generation_output.sequences
+        output = tokenizer.batch_decode(s, skip_special_tokens=True)
+        output = [_.split('Response:\n')[-1] for _ in output]
+        
+        return output, logits.tolist()
 
     # testing code for readme
 
     logit_list = []
     gold_list= []
+    outputs = []
+    logits = []
     from tqdm import tqdm
+    gold = []
+    pred = []
+
     with open(test_data_path, 'r') as f:
         test_data = json.load(f)
+        instructions = [_['instruction'] for _ in test_data]
+        inputs = [_['input'] for _ in test_data]
+        gold = [int(_['output'] == 'Yes.') for _ in test_data]
+        def batch(list, batch_size=32):
+            chunk_size = (len(list) - 1) // batch_size + 1
+            for i in range(chunk_size):
+                yield list[batch_size * i: batch_size * (i + 1)]
+        for i, batch in tqdm(enumerate(zip(batch(instructions), batch(inputs)))):
+            instructions, inputs = batch
+            output, logit = evaluate(instructions, inputs)
+            outputs = outputs + output
+            logits = logits + logit
         for i, test in tqdm(enumerate(test_data)):
-            if test['output'] == 'Yes.':
-                gold_list.append(1)
-            else:
-                gold_list.append(0)
-            output, logits = evaluate(test['instruction'], test['input'])
-            logit_list.append(logits[0].item())
-    
-    # print(roc_auc_score(gold_list, logit_list))
+            test_data[i]['predict'] = outputs[i]
+            pred.append(logits[i][0])
 
     data[train_sce][test_sce][model_name][seed][sample] = roc_auc_score(gold_list, logit_list)
     f = open(result_json_data, 'w')
