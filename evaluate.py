@@ -30,6 +30,7 @@ def main(
     lora_weights: str = "tloen/alpaca-lora-7b",
     test_data_path: str = "data/test.json",
     result_json_data: str = "temp.json",
+    batch_size: int = 1,
     share_gradio: bool = False,
 ):
     assert (
@@ -144,7 +145,6 @@ def main(
                 return_dict_in_generate=True,
                 output_scores=True,
                 max_new_tokens=max_new_tokens,
-                # batch_size=batch_size,
             )
         s = generation_output.sequences
         scores = generation_output.scores[0].softmax(dim=-1)
@@ -172,7 +172,7 @@ def main(
         instructions = [_['instruction'] for _ in test_data]
         inputs = [_['input'] for _ in test_data]
         gold = [int(_['output'] == 'Yes.') for _ in test_data]
-        def batch(list, batch_size=32):
+        def batch(list, batch_size=batch_size):
             chunk_size = (len(list) - 1) // batch_size + 1
             for i in range(chunk_size):
                 yield list[batch_size * i: batch_size * (i + 1)]
