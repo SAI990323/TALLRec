@@ -30,7 +30,7 @@ def main(
     lora_weights: str = "tloen/alpaca-lora-7b",
     test_data_path: str = "data/test.json",
     result_json_data: str = "temp.json",
-    batch_size: int = 1,
+    batch_size: int = 32,
     share_gradio: bool = False,
 ):
     assert (
@@ -73,6 +73,7 @@ def main(
         exit(0)
         # data[train_sce][test_sce][model_name][seed][sample] = 
 
+
     tokenizer = LlamaTokenizer.from_pretrained(base_model)
     if device == "cuda":
         model = LlamaForCausalLM.from_pretrained(
@@ -109,6 +110,8 @@ def main(
             device_map={"": device},
         )
 
+
+    tokenizer.padding_side = "left"
     # unwind broken decapoda-research config
     model.config.pad_token_id = tokenizer.pad_token_id = 0  # unk
     model.config.bos_token_id = 1
@@ -117,6 +120,9 @@ def main(
     if not load_8bit:
         model.half()  # seems to fix bugs for some users.
 
+    model.eval()
+    if torch.__version__ >= "2" and sys.platform != "win32":
+        model = torch.compile(model)
 
     def evaluate(
         instructions,
@@ -145,6 +151,7 @@ def main(
                 return_dict_in_generate=True,
                 output_scores=True,
                 max_new_tokens=max_new_tokens,
+                # batch_size=batch_size,
             )
         s = generation_output.sequences
         scores = generation_output.scores[0].softmax(dim=-1)
@@ -156,9 +163,8 @@ def main(
         output = [_.split('Response:\n')[-1] for _ in output]
         
         return output, logits.tolist()
-
+        
     # testing code for readme
-
     logit_list = []
     gold_list= []
     outputs = []
@@ -172,7 +178,7 @@ def main(
         instructions = [_['instruction'] for _ in test_data]
         inputs = [_['input'] for _ in test_data]
         gold = [int(_['output'] == 'Yes.') for _ in test_data]
-        def batch(list, batch_size=batch_size):
+        def batch(list, batch_size=32):
             chunk_size = (len(list) - 1) // batch_size + 1
             for i in range(chunk_size):
                 yield list[batch_size * i: batch_size * (i + 1)]
@@ -183,9 +189,12 @@ def main(
             logits = logits + logit
         for i, test in tqdm(enumerate(test_data)):
             test_data[i]['predict'] = outputs[i]
+            test_data[i]['logits'] = logits[i]
             pred.append(logits[i][0])
 
-    data[train_sce][test_sce][model_name][seed][sample] = roc_auc_score(gold_list, logit_list)
+    from sklearn.metrics import roc_auc_score
+
+    data[train_sce][test_sce][model_name][seed][sample] = roc_auc_score(gold, pred)
     f = open(result_json_data, 'w')
     json.dump(data, f, indent=4)
     f.close()
