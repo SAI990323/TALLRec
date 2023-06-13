@@ -185,7 +185,7 @@ def main(
             test_data[i]['predict'] = outputs[i]
             pred.append(logits[i][0])
 
-    data[train_sce][test_sce][model_name][seed][sample] = roc_auc_score(gold, logits)
+    data[train_sce][test_sce][model_name][seed][sample] = roc_auc_score(gold, pred)
     f = open(result_json_data, 'w')
     json.dump(data, f, indent=4)
     f.close()
