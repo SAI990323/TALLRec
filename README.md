@@ -1,3 +1,5 @@
+**Wrongly delete the line in evaluate.py by mistake, now it has been updated**
+
 We introduce a novel framework (TALLRec) that enables the efficient and effective adaptation of LLMs to recommendation tasks.
 
 ## Main results
