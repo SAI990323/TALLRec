@@ -2,7 +2,7 @@
 
 We introduce a novel framework (TALLRec) that enables the efficient and effective adaptation of LLMs to recommendation tasks.
 
-## Main results
+# Main results
 |                                 |  |movie |  ||   book |  |
 |-------------------------------                  | ----- | ----- | ----- | ----- | ----- | ----- |
 | Few-shot                          | 16     | 64     | 256 | 16 | 64 | 256 |
