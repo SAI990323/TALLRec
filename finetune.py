@@ -1,5 +1,4 @@
 import os
-# import os
 os.environ['LD_LIBRARY_PATH'] = '/data/baokq/miniconda3/envs/alpaca_lora/lib/'
 import sys
 from typing import List
@@ -9,11 +8,6 @@ import torch
 import transformers
 from datasets import load_dataset
 
-"""
-Unused imports:
-import torch.nn as nn
-import bitsandbytes as bnb
-"""
 
 from peft import (  # noqa: E402
     LoraConfig,
@@ -23,7 +17,6 @@ from peft import (  # noqa: E402
     set_peft_model_state_dict,
 )
 from transformers import LlamaForCausalLM, LlamaTokenizer  # noqa: F402
-
 
 def train(
     # model/data params
