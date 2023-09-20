@@ -1,6 +1,5 @@
+Our weights for the instruction tuning model is uploading [here](https://drive.google.com/file/d/1teUwLm4BOqhngfCKKXE1tiMhJPf_FvRJ/view?usp=sharing)
 **TALLRec: An Effective and Efficient Tuning Framework to Align Large Language Model with Recommendation** is available at https://arxiv.org/abs/2305.00447.
-
-** There is a revised version of TALLREC
 
 **Wrongly delete the line in evaluate.py by mistake, now it has been updated**
 
