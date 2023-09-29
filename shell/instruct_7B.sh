@@ -17,7 +17,7 @@ do
                     --base_model $base_model \
                     --train_data_path $train_data \
                     --val_data_path $val_data \
-                    --output_dir $output_dir_$seed_$sample \
+                    --output_dir ${output_dir}_${seed}_${sample} \
                     --batch_size 128 \
                     --micro_batch_size 32 \
                     --num_epochs 200 \
