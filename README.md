@@ -41,4 +41,6 @@ If you want to run it under your environment, you need to make changes to the sh
 
 Note that we will automatically detect all the different seed and sample files in the output_dir directory, and then integrate these results into the output_dir.json file.
 
-Our project is developed based on the Alpaca_lora repo (https://github.com/tloen/alpaca-lora), thanks for their contributions.
+Our project is developed based on the Alpaca_lora [repo](https://github.com/tloen/alpaca-lora), thanks for their contributions.
+
+For "Environment setting sharing for CUDA 12.0", please see [here])(https://github.com/SAI990323/TALLRec/issues/46).
